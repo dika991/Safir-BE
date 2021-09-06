@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Pemesanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PemesananController extends Controller
 {
@@ -35,7 +36,12 @@ class PemesananController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            "id_paket" => "required",
+            "name" => "required",
+            "email" => "required",
+            ""
+        ]);
     }
 
     /**
