@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Api\User\DashboardController;
+use App\Http\Controllers\Api\PemesananController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,5 +25,9 @@ Route::group( ['prefix' => 'user','middleware' => ['auth:user-api','scopes:user'
 
     Route::prefix('package')->group(function () {
         Route::get("/{id_package}", [DashboardController::class, 'detailPackage']);
+    });
+
+    Route::prefix('book')->group(function () {
+        Route::post('/', [PemesananController::class, 'store']);
     });
 });

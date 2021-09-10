@@ -1,13 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\PostBookPemesanan;
 use App\Pemesanan;
+use App\Traits\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Services\PemesananService;
 
 class PemesananController extends Controller
 {
+    use JsonResponse;
+    private $pemesananService;
+
+    public function __construct(
+        PemesananService $pemesananService
+    )
+    {
+        $this->pemesananService = $pemesananService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,14 +47,17 @@ class PemesananController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostBookPemesanan $request)
     {
-        $validate = Validator::make($request->all(), [
-            "id_paket" => "required",
-            "name" => "required",
-            "email" => "required",
-            ""
-        ]);
+        $result = $this->pemesananService->store($request->all());
+        if($result->isFail()){
+            return $this->fail($result->getMessage());
+        }
+        
+        return $this->successWithData(
+            trans('message.store-data') . ' ' . trans('message.success'),
+            $result->getResult()
+        );
     }
 
     /**
