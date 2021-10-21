@@ -4,83 +4,73 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Model\Pembayaran;
+use App\Models\Pembayaran as ModelsPembayaran;
+use App\Models\Pemesanan;
+use App\Traits\JsonResponse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PembayaranController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    use JsonResponse;
+
+    public function detailPayment($id_pembayaran){
+        $pembayaran = ModelsPembayaran::where('id', $id_pembayaran)->first();
+        if(!$pembayaran){
+            return $this->fail(trans('message.failed'));
+        }
+
+        return $this->successWithData(trans('message.success'), $pembayaran);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function postPayment(Request $request){
+        $validate = Validator::make($request->all(), [
+            "nominal" => "required",
+            "code" => "required",
+            "keterangan" => "required",
+            "bank_id" => "required"
+        ]);
+        if($validate->fails()){
+            return $validate->errors();
+        }
+        $pemesanan = Pemesanan::where('code', $request['code'])->select('id')->first(); 
+        if(!$pemesanan){
+            return $this->fail("Code not found", 404);
+        }
+
+        $pembayaran = new ModelsPembayaran();
+        $pembayaran->tanggal = Carbon::parse()->today()->format('Y-m-d');
+        $pembayaran->nominal = $request['nominal'];
+        $pembayaran->catatan = $request['keterangan'];
+        $pembayaran->id_pemesanan = $pemesanan->id;
+        $pembayaran->id_tagihan = $request['id_tagihan'];
+        $pembayaran->save();
+        
+        return $this->successWithData("Data saved.", $pembayaran);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function postImage(Request $request){
+        $validatedData = $request->validate([
+            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+        $paket = Paket::findOrFail($paket_id);
+
+        $name = $request->file('image')->getClientOriginalName();
+        $path = $request->file('image')->store('public/images/' . $paket->kode);
+
+        $save = new FotoPaket;
+        $save->id_paket = $paket_id;
+        $save->name = $name;
+        $save->path = $path;
+        $save->url = config('app.url') . "/storage/" . str_replace('public/', '', $path);
+        $save->save();
+
+        return $this->successWithData('Upload Success', $save);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Pembayaran  $pembayaran
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Pembayaran $pembayaran)
-    {
-        //
-    }
+    public function updatePayment(){
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Pembayaran  $pembayaran
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Pembayaran $pembayaran)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Pembayaran  $pembayaran
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Pembayaran $pembayaran)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Pembayaran  $pembayaran
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Pembayaran $pembayaran)
-    {
-        //
     }
 }

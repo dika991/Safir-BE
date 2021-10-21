@@ -177,6 +177,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
 
+        Onecentlin\Adminer\ServiceProvider::class,
+
     ],
 
     /*

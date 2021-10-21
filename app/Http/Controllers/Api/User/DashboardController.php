@@ -8,6 +8,7 @@ use App\Services\OperationalService;
 use App\Traits\JsonResponse;
 use App\Transformers\PaketTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -30,10 +31,29 @@ class DashboardController extends Controller
         return $this->successWithData(trans('message.data'), $result);
     }
 
-    public function detailPackage($id_package)
+    public function detailPackage($code_package)
     {
-        $result = $this->operationalInterface->show($id_package);
+        $result = $this->operationalInterface->show($code_package);
         if (!$result) {
+            return $this->fail(trans('message.empty'));
+        }
+
+        return $this->successWithData(trans('message.success'), (new PaketTransformer)->transform($result));
+    }
+
+    public function recentPackage(){
+        $result = $this->operationalInterface->recent();
+        if(!$result){
+            return $this->fail(trans('message.empty'));
+        }
+
+        return $this->successWithData(trans('message.success'), $result);
+    }
+
+    public function detailPackageCode($code_package){
+        $result = $this->operationalInterface->detailCode($code_package);
+
+        if(!$result){
             return $this->fail(trans('message.empty'));
         }
 

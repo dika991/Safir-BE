@@ -7,4 +7,6 @@ interface OperationalInt{
 
     public function show($id);
     public function listAvailable($data);
+    public function recent();
+    public function detailCode($code);
 }

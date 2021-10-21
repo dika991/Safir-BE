@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Jemaah extends Model
 {
     //
+
+    public function tipe(){
+        return $this->hasOne(Tipe::class, 'id', 'id_paket');
+    }
 }

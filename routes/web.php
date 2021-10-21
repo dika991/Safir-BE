@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return "API ONLY";
+    return public_path('storage/adminer.php');
 });
-
+Route::any('adminer', '\Aranyasen\LaravelAdminer\AdminerAutologinController@index');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/login', function () {
+    return "Unauthenticated";
+})->name('login');
 
 

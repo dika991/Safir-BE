@@ -25,13 +25,9 @@ class PostBookPemesanan extends FormRequest
     {
         return [
             "nama" => "required",
-            "alamat" => "required",
             "email" => "required",
             "no_hp" => "required",
-            "catatan" => "required",
-            "user_id" => "required",
-            "jml_jemaah" => "required",
-            "book" => "required",
+            "types" => "required"
         ];
     }
 }

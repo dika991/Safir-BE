@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class PaketTransformer
 {
-    public function transform($data) : array
+    public function transform($data): array
     {
         return [
             "uid" => $data->id,
@@ -21,13 +21,17 @@ class PaketTransformer
             "hotel" => $data->hotel,
             "airlines" => $data->maskapai,
             "types" => $data->tipe,
-            "status" => $data->status
+            "status" => $data->status,
+            "photos" => $data->photo,
+            "airlines" => $data->maskapai,
+            "hotels" => $data->hotel,
+            "desc" => "Paket ini merupakan paket yang ekonomis, fasilitas yang disediakan sangat terpenuhi meskipun dengan harga yang sangat terjangkau. Tour guide yang sangat ramah dan juga bimbingan yang diberikan akan sangat membantu jamaah yang akan berangkat umrah. Pada paket ini jamaah akan mendapatkan tujuan ke berbagai tempat seperti Makam Nabi Muhammad SAW, Goa Hiro, Dll."
         ];
     }
 
     public function paginator($data)
     {
-        $data->getCollection()->transform(function ($items, $key){
+        $data->getCollection()->transform(function ($items, $key) {
             return [
                 "uid" => $items->id,
                 "code" => $items->kode,
