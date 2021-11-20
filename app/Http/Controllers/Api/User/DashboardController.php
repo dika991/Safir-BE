@@ -42,6 +42,7 @@ class DashboardController extends Controller
     }
 
     public function recentPackage(){
+        Log::info("Masuk Terus");
         $result = $this->operationalInterface->recent();
         if(!$result){
             return $this->fail(trans('message.empty'));

@@ -12,6 +12,6 @@ class FotoPaket extends Model
     protected $appends = ['link'];
 
     public function getLinkAttribute(){
-        return config('app.url')."/storage/".str_replace('public/','',$this->path);
+        return config('app.url')."storage/".str_replace('public/','',$this->path);
     }
 }

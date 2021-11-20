@@ -130,16 +130,29 @@ class PemesananService extends ResultService
             $pemesanan->save();
 
             foreach ($book as $b) {
-                $tipe = Tipe::findOrFail($b['id']);
-                $tipe->kuota = $tipe->kuota - $b['total'];
-                $tipe->save();
-                $pemesananDet = new $this->pemesananDetails;
-                $pemesananDet->id_pemesanan = $pemesanan->id;
-                $pemesananDet->id_paket = $tipe->id_paket;
-                $pemesananDet->id_tipe = $b['id'];
-                $pemesananDet->total_jemaah = $b['total'];
-                $pemesananDet->save();
-                array_push($detail, $pemesananDet);
+                if ($b['total'] == 0) {
+                    continue;
+                } else {
+                    $tipe = Tipe::findOrFail($b['id']);
+                    $tipe->kuota = $tipe->kuota - $b['total'];
+                    $tipe->save();
+                    $pemesananDet = new $this->pemesananDetails;
+                    $pemesananDet->id_pemesanan = $pemesanan->id;
+                    $pemesananDet->id_paket = $tipe->id_paket;
+                    $pemesananDet->id_tipe = $b['id'];
+                    $pemesananDet->total_jemaah = $b['total'];
+                    $pemesananDet->save();
+                    foreach(range(1, $b['total']) as $daa){
+                        $jemaah = Jemaah::create([
+                            "nama" => NULL,
+                            "jenis_kelamin" => NULL,
+                            "usia" => NULL,
+                            "id_pemesanan" => $pemesanan->id,
+                            "id_paket" => $tipe->id,
+                        ]);
+                    }
+                    array_push($detail, $pemesananDet);
+                }
             }
 
             $tagihan = Tagihan::create([
@@ -151,11 +164,13 @@ class PemesananService extends ResultService
                 "status" => 0
             ]);
             DB::commit();
+            $jemaahs = Jemaah::where('id_pemesanan', $pemesanan->id)->get();
 
             $data = [
                 "transaksi" => $transaksi,
                 "pemesanan" => $pemesanan,
-                "detail" => $detail
+                "detail" => $detail,
+                "jemaah" => $jemaahs
             ];
             return $this->setResult($data)->setFail(false);
         } catch (\Exception $e) {

@@ -30,7 +30,11 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::tokensCan([
             'user' => 'User Type',
-            'admin' => 'Admin User Type'
+            'admin' => 'Admin User Type',
+            'superAdmin' => "Task for Super Admin",
+            'operationalAdmin' => 'Task for only operationalAdmin',
+            'inventarisAdmin' => 'Task for only inventaris',
+            'accountingAdmin' => 'Task for accounting'
         ]);
     }
 }

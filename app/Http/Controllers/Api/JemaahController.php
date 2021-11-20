@@ -4,83 +4,75 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Model\Jemaah;
+use App\Models\Dokumen;
+use App\Models\Jemaah as ModelsJemaah;
+use App\Models\Pemesanan;
+use App\Traits\JsonResponse;
 use Illuminate\Http\Request;
 
 class JemaahController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    use JsonResponse;
+
+    public function listJemaah($code)
     {
-        //
+        $pemesanan = Pemesanan::where('code', $code)->select('id')->first();
+        $jemaah = ModelsJemaah::where('id_pemesanan', $pemesanan->id)->get();
+
+        return $this->successWithData("Success Get Data", $jemaah, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function detailJemaah($id_pemesanan, $id_jemaah)
     {
-        //
+        $jemaah = ModelsJemaah::findOrFail($id_jemaah);
+
+        return $this->successWithData("Success", $jemaah, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function updateJemaah($id_pemesanan, $id_jemaah, Request $request)
     {
-        //
+        $validate = $request->validate([
+            "nama" => "required",
+            "jenis_kelamin" => "required",
+            "usia" => "required",
+        ]);
+
+        $jemaah = ModelsJemaah::findOrFail($id_jemaah);
+        $jemaah->nama = $request['nama'];
+        $jemaah->usia = $request['usia'];
+        $jemaah->jenis_kelamin = $request['jenis_kelamin'];
+        $jemaah->save();
+
+        return $this->successWithData("Update Jemaah Berhasil", $jemaah);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Jemaah  $jemaah
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Jemaah $jemaah)
+    public function detailJemaahAdmin($id)
     {
-        //
+        $jemaah = ModelsJemaah::findOrFail($id);
+        $dokumen = $this->listDokumen($jemaah->id);
+
+        $jemaah['dokumen'] = $dokumen['dokumen'];
+        $jemaah['check'] = $dokumen['check'];
+        
+        return $this->successWithData("Detail Jemaah", $jemaah);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Jemaah  $jemaah
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Jemaah $jemaah)
+    public function listDokumen($id_jemaah)
     {
-        //
-    }
+        $dokumen = ["passport", "ktp", "surat_vaksin", "pcr", "buku_nikah"];
+        $check = [];
+        foreach ($dokumen as $dd) {
+            $list = Dokumen::where('id_jemaah', $id_jemaah)->where('jenis', "LIKE", "%" . $dd . "%")->first();
+            if (!$list) {
+                array_push($check, $dd);
+            }
+        }
+        $list = Dokumen::where('id_jemaah', $id_jemaah)->get();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Jemaah  $jemaah
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Jemaah $jemaah)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Jemaah  $jemaah
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Jemaah $jemaah)
-    {
-        //
+        $response = [
+            "check" => $check,
+            "dokumen" => $list
+        ];
+        return $response;
     }
 }

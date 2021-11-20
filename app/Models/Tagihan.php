@@ -24,4 +24,13 @@ class Tagihan extends Model
     {
         return $this->hasOne(Pemesanan::class, 'id', 'id_pemesanan');
     }
+
+    public function pembayaran(){
+        return $this->hasOne(Pembayaran::class, 'id_tagihan', 'id');
+    }
+
+    public function pictures()
+    {
+        return $this->hasOne(PembayaranPictures::class, "id_tagihan", "id");
+    }
 }

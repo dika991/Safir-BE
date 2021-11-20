@@ -23,7 +23,7 @@ class OperationalRepository implements OperationalInt
     public function show($id)
     {
         return $this->paket->with('hotel', 'maskapai', 'tipe', 'photo')
-            ->where('code', $id)->first();
+            ->where('id', $id)->first();
     }
 
     public function listAvailable($data){

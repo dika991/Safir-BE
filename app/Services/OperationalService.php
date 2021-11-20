@@ -41,6 +41,7 @@ class OperationalService extends ResultService
             $paket->tgl_berakhir = $end;
             $paket->id_hotel = $data['hotel_id'];
             $paket->id_maskapai = $data['airlines_id'];
+            $paket->status = "process";
             $paket->save();
 
             DB::commit();
