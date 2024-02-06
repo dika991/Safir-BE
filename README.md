@@ -2,5 +2,5 @@
 
 ## Safir
 
-Project ini dibuat untuk memenuhi tugas besar mata kuliah pemrograman web Prodi Informatika, Fakultas Teknologi Industri, Universitas Islam I ndonesia.
+Project ini dibuat untuk memenuhi tugas besar mata kuliah pemrograman web Prodi Informatika, Fakultas Teknologi Industri, Universitas Islam Indonesia.
 Project ini menggunakan Laravel dan Bootstrap.
